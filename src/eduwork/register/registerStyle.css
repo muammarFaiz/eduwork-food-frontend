@@ -1,0 +1,23 @@
+body {
+    background-color: rgb(115, 209, 221);
+}
+
+.registerWrapper {
+    margin-top: 30px;
+    display: grid;
+    justify-content: center;
+}
+.registerCard form {
+    width: 500px;
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 20px;
+}
+.registerCard form > input, button {
+    font-size: 1rem;
+    padding: 10px;
+}
+.registerCard form > button {
+    padding: 7px;
+    font-size: 1.3rem;
+}
