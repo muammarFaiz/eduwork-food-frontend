@@ -3,7 +3,7 @@ import axios from "axios"
 import './registerStyle.css'
 import { useState } from "react"
 
-export default function Register() {
+export default function Register(props) {
     const [sending, setSending] = useState('Submit')
     const [input, setInput] = useState({username: '', email: '', password: '', confirmPass: ''})
     const navigate = useNavigate()
@@ -27,7 +27,7 @@ export default function Register() {
                     if(result.success) {
                         alert('success, redirecting to login...')
                         setSending('success')
-                        navigate('/')
+                        navigate('/login')
                     } else {
                         console.log(result);
                         setSending(result.message)
@@ -53,17 +53,18 @@ export default function Register() {
             return clone
         })
     }
-    // ***************************************** navigate to login and check the server login
+
     return (
         <div>
             <div className="navigationHeader">
                 <div className="rightSide">
-                    <button>Home</button>
+                    <button><Link to={'/home'} className='routeLink'>Home</Link></button>
                 </div>
                 <div className="loginRegister">
-                    <button><Link to={'login'} className='routeLink'>Login</Link></button>
+                    <button><Link to={'/login'} className='routeLink'>Login</Link></button>
                 </div>
             </div>
+
             <div className="registerWrapper">
                 <div className="registerCard">
                     <form onSubmit={send}>

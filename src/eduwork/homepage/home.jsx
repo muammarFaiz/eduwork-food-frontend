@@ -2,10 +2,10 @@ import { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 
-import mydata from '../../data'
-import ax from './homepageUtils'
+import initialReq, { card1, cardFilter, detectClick1, dropdownHandle, submitSearch1, toggleButton1 } from './homePageUtils'
 
-export default function Home() {
+
+export default function Home(props) {
   const [cardData, setCardData] = useState('')
   const [memory1, setMemory1] = useState({
     categories: [],
@@ -17,168 +17,57 @@ export default function Home() {
   })
   const searchbarRef = useRef()
 
-  useEffect(() => {
-    console.log('use effect is ran...');
-    axios.get('http://localhost:3001/index')
-    .then(ful => ful.data, rej => console.log(rej))
-    .then(fulData => {
-      console.log(fulData);
-      setCardData(fulData)
-    })
-    axios.get('http://localhost:3001/categories')
-    .then(fulfil => fulfil.data, rej => console.log(rej))
-    .then(fulfilData => {
-      console.log(fulfilData);
-      setMemory1(prev => {
-        return {...prev, categories: fulfilData}
-      })
-    })
-    axios.get('http://localhost:3001/tags')
-    .then(fulfil => fulfil.data, rej => console.log(rej))
-    .then(fulfilData => {
-      console.log(fulfilData);
-      setMemory1(prev => {
-        return {...prev, tags: fulfilData}
-      })
-    })
-  }, [])
-  console.log('re-render');
+  useEffect(() => initialReq(axios, setCardData, setMemory1), [])
 
-  const toggleButton = (val) => {
-    const bgColor = val.target.style
-    if(bgColor.color === 'black') {
-      bgColor.color = ''
-      bgColor.borderRadius = ''
-      bgColor.border = ''
-      setMemory1(prev => {
-        const clone = {...prev}
-        if (val.target.parentElement.attributes.class.value === 'tagsDiv') {
-          if (prev.toggleTags.includes(val.target.innerText)) {
-            const tagIndex = prev.toggleTags.indexOf(val.target.innerText)
-            clone.toggleTags.splice(tagIndex, 1)
-            return clone
-          } else {return clone}
-        } else {
-          if(prev.toggleCategory.includes(val.target.innerText)) {
-            const categoryIndex = prev.toggleCategory.indexOf(val.target.innerText)
-            clone.toggleCategory.splice(categoryIndex, 1)
-            return clone
-          } else {return clone}
-        }
-      })
-    } else {
-      bgColor.color = 'black'
-      bgColor.borderRadius = '5px'
-      bgColor.border = 'solid 1px green'
-      setMemory1(prev => {
-        let clone = {...prev}
-        if(val.target.parentElement.attributes.class.value === 'tagsDiv') {
-          if(prev.toggleTags.includes(val.target.innerText)) {return {...prev}}
-          else {
-            clone.toggleTags = [...prev.toggleTags, val.target.innerText]
-            return clone
-          }
-        } else {
-          if(prev.toggleCategory.includes(val.target.innerText)) {return {...prev}}
-          else {
-            clone.toggleCategory = [...prev.toggleCategory, val.target.innerText]
-            return clone
-          }
-        }
-      })
-    }
-  }
+  const toggleButton = toggleButton1(setMemory1, searchbarRef)
 
-  const detectClick = val => {
-    let toggle
-    const area = val.target.parentElement.attributes.class
-    if ((!area || (area.value !== 'dropdownCategory' && area.value !== 'dropdownCategory_content active')) && memory1.dropdownCategory) {
-      setMemory1(prev => {
-        return {...prev, dropdownCategory: ''}
-      })
-    }
-  }
+  const detectClick = detectClick1(setMemory1, memory1)
 
-  const card = (obj, i) => {
-    return (
-      <div className='product__card' key={i}>
-        <h1>{obj.productName}</h1>
-        <img src={`http://localhost:3001/images/${obj.image_url.split('/')[obj.image_url.split('/').length - 1]
-          }`} alt="" />
-        <div className='cardDetails'>
-          <p>category: {obj.category.name}</p>
-          <p>tag: {obj.tag.map(obj => obj.name).join(', ')}</p>
-          <p>{obj.price}</p>
+  const card = card1()
+
+  const dropdownHandler = dropdownHandle(memory1, setMemory1)
+
+  const cardToShow = cardFilter(cardData, memory1, card)
+
+  const submitSearch = submitSearch1(setMemory1, searchbarRef)
+
+  const logoutUser = () => {
+    axios.get('http://localhost:3001/auth/logout', {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    .then(fulfil => fulfil.data, err => console.log(err.message))
+    .then(data => {
+      if(data.status == 'token removed') {
+        localStorage.removeItem('token')
+        alert('logged out')
+        props.topMemoryEdit('loggedIn', false)
+      } else {
+        console.log(data);
+      }
+    }, error => console.log({status: 'error 2', data: error}))
+  } // check if this logout user works properly
+
+  const ifLoggedIn = () => {
+    if(props.topMemory.loggedIn) {
+      return (
+        <div className='loginRegister'>
+          <button><Link to={'/cart'} className='routeLink'>Cart</Link></button>
+          <button><Link to={'/profile'} className='routeLink'>Profile</Link></button>
+          <button onClick={logoutUser}>Logout</button>
         </div>
-        <div>
-          <button>Add to cart</button>
-          <button>Buy</button>
-        </div>
-      </div>
-    )
-  }
-
-  const dropdownHandler = (val) => {
-    if (memory1.dropdownCategory) {
-      setMemory1(prev => {
-        return { ...prev, dropdownCategory: '' }
-      })
+      )
     } else {
-      setMemory1(prev => {
-        return { ...prev, dropdownCategory: 'active' }
-      })
+      return (
+        <div className='loginRegister'>
+          <button><Link to={'/login'} className='routeLink'>Login</Link></button>
+          <button><Link to={'/register'} className='routeLink'>Register</Link></button>
+        </div>
+      )
     }
   }
 
-  const cardToShow = () => {
-    const phase1 = cardData.filter((obj, i) => {
-      const catString = obj.category.name
-      if (memory1.toggleCategory.length == 0) {
-        return obj
-      } else {
-        if (memory1.toggleCategory.includes(catString.charAt(0).toUpperCase() + catString.slice(1))) {
-          console.log('a product included');
-          return obj
-        }
-      }
-    })
-    const phase2 = phase1.filter((obj, i) => {
-      const tagArray = obj.tag
-      if (memory1.toggleTags.length == 0) {
-        return true
-      } else {
-        let accepted = false
-        tagArray.forEach(tagObj => {
-          if (memory1.toggleTags.includes(tagObj.name.charAt(0).toUpperCase() + tagObj.name.slice(1))) {
-            accepted = true
-          }
-        });
-        return accepted
-      }
-    })
-    const phase3 = phase2.filter((obj, i) => {
-      const productName = obj.productName
-      if (memory1.searchbar == '') {
-        return true
-      } else {
-        const re = RegExp(memory1.searchbar, 'i')
-        if(productName.match(re)) {
-          return true
-        }
-      }
-    })
-    console.log(phase3);
-    const final = phase3.map((obj, i) => card(obj, i))
-    return final
-  }
-
-  const submitSearch = () => {
-    setMemory1(prev => {
-      return {...prev, searchbar: searchbarRef.current}
-    })
-  }
-
-// do request to server only when first render and selecting category, we can filter using searchbar and tags
   return (
     <div onClick={detectClick}>
       <div className='navigationHeader'>
@@ -207,10 +96,7 @@ export default function Home() {
           <input onChange={val => {searchbarRef.current = val.target.value}} type="text" />
           <button onClick={submitSearch}>Search</button>
         </div>
-        <div className='loginRegister'>
-          <button><Link to={'login'} className='routeLink'>Login</Link></button>
-          <button><Link to={'register'} className='routeLink'>Register</Link></button>
-        </div>
+        {ifLoggedIn()}
       </div>
       <div className='tagsDiv'>
         tags:

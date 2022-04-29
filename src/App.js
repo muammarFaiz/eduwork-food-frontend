@@ -1,18 +1,85 @@
-import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
+import axios from 'axios'
+import { useEffect } from 'react'
 import Home from './eduwork/homepage/home'
 import Register from './eduwork/register/register'
 import Login from './eduwork/login/login'
+import Profile from './eduwork/userProfile/userProfile'
 
 import './App.css';
+import { useState } from 'react';
 
 function App() {
+  const [memory2, setMemory2] = useState({
+    loggedIn: false
+  })
+
+  const topMemoryEdit = (key, value) => {
+    setMemory2(prev => {
+      const clone = {...prev}
+      clone[key] = value
+      return clone
+    })
+  }
+
+  useEffect(() => {
+    console.log('authenticate useeffect ran...');
+    if (localStorage.getItem('token')) {
+      axios.get('http://localhost:3001/auth', {
+        headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
+        .then(fulfil => fulfil.data, err => console.log(err.message))
+        .then(data => {
+          if (data.loggedIn) {
+            setMemory2(prev => {
+              return { ...prev, loggedIn: 'token accepted' }
+            })
+          } else {
+            console.log(data);
+            setMemory2(prev => {
+              return { ...prev, loggedIn: 'token rejected' }
+            })
+          }
+        }, err => console.log(err.message))
+      } else {
+        alert('no token found, need to login')
+        setMemory2(prev => {
+          return { ...prev, loggedIn: 'token rejected' }
+        })
+    }
+  }, [])
+
+  console.log({message: 'app render...', data: memory2});
+
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='register' element={<Register/>}/>
-        <Route path='login' element={<Login/>}/>
-      </Routes>
+      {
+        memory2.loggedIn ?
+        <Routes>
+            <Route path='/' element={
+              <Home topMemoryEdit={topMemoryEdit} topMemory={memory2} />
+            }/>
+            <Route path='register' element={
+              memory2.loggedIn === 'token accepted' ?
+              <Navigate to={'/'} /> :
+              <Register topMemoryEdit={topMemoryEdit} topMemory={memory2} />
+            }/>
+            <Route path='login' element={
+              memory2.loggedIn === 'token accepted' ?
+              <Navigate to={'/'} /> :
+              <Login topMemoryEdit={topMemoryEdit} topMemory={memory2} />
+            }/>
+            <Route path='profile' element={
+              memory2.loggedIn === 'token accepted' ?
+              <Profile topMemoryEdit={topMemoryEdit} topMemory={memory2} /> :
+              <Navigate to={'/'} />
+            }/>
+            <Route path='*' element={
+              <Navigate to={'/'} />
+            }/>
+        </Routes> :
+        <h1>Loading...</h1>
+      }
     </BrowserRouter>
   );
 }

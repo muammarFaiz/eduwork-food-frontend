@@ -47,13 +47,14 @@ body {
 .searchbar {
   display: grid;
   grid-template-columns: 1fr min-content;
-  gap: 1rem;
+  gap: 2rem;
 }
 .searchbar input {
   width: 100%;
   min-width: 150px;
   font-size: inherit;
   letter-spacing: 1px;
+  padding: 0 10px 0 10px;
 }
 
 .loginRegister {
@@ -114,4 +115,8 @@ body {
   margin: 0 0 0 15px;
   padding: 5px 10px;
   font-size: 0.9rem;
+}
+
+h1.warningInfo {
+  text-align: center;
 }
