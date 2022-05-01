@@ -5,6 +5,7 @@ import Home from './eduwork/homepage/home'
 import Register from './eduwork/register/register'
 import Login from './eduwork/login/login'
 import Profile from './eduwork/userProfile/userProfile'
+import Cart from './eduwork/cart/cartPage'
 
 import './App.css';
 import { useState } from 'react';
@@ -72,6 +73,11 @@ function App() {
             <Route path='profile' element={
               memory2.loggedIn === 'token accepted' ?
               <Profile topMemoryEdit={topMemoryEdit} topMemory={memory2} /> :
+              <Navigate to={'/'} />
+            }/>
+            <Route path='cart' element={
+              memory2.loggedIn === 'token accepted' ?
+              <Cart topMemoryEdit={topMemoryEdit} topMemory={memory2} /> :
               <Navigate to={'/'} />
             }/>
             <Route path='*' element={

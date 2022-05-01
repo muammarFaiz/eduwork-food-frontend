@@ -13,7 +13,9 @@ export default function Home(props) {
     dropdownCategory: '',
     toggleCategory: [],
     toggleTags: [],
-    searchbar: ''
+    searchbar: '',
+    logoutLoading: false,
+    addCartLoading: false
   })
   const searchbarRef = useRef()
 
@@ -23,7 +25,24 @@ export default function Home(props) {
 
   const detectClick = detectClick1(setMemory1, memory1)
 
-  const card = card1()
+  const addToCart = (id) => {
+    setMemory1(prev => {
+      return {...prev, addCartLoading: 'Loading...'}
+    })
+    axios({
+      url: 'http://localhost:3001/api/cart',
+      method: 'POST',
+      headers: {authorization: `Bearer ${localStorage.getItem('token')}`},
+      data: {product: id}
+    }).then(result => result.data, err => console.log(err))
+    .then(data => {
+      console.log(data);
+      setMemory1(prev => {
+        return { ...prev, addCartLoading: false }
+      })
+    }, err => console.log(err))
+  }
+  const card = card1(addToCart, memory1)
 
   const dropdownHandler = dropdownHandle(memory1, setMemory1)
 
@@ -31,7 +50,11 @@ export default function Home(props) {
 
   const submitSearch = submitSearch1(setMemory1, searchbarRef)
 
+
   const logoutUser = () => {
+    setMemory1(prev => {
+      return {...prev, logoutLoading: true}
+    })
     axios.get('http://localhost:3001/auth/logout', {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`
@@ -39,18 +62,24 @@ export default function Home(props) {
     })
     .then(fulfil => fulfil.data, err => console.log(err.message))
     .then(data => {
-      if(data.status == 'token removed') {
+      if(data.status === 'token removed') {
         localStorage.removeItem('token')
         alert('logged out')
-        props.topMemoryEdit('loggedIn', false)
+        setMemory1(prev => {
+          return { ...prev, logoutLoading: false }
+        })
+        props.topMemoryEdit('loggedIn', 'token rejected')
       } else {
         console.log(data);
+        setMemory1(prev => {
+          return { ...prev, logoutLoading: false }
+        })
       }
     }, error => console.log({status: 'error 2', data: error}))
   } // check if this logout user works properly
 
   const ifLoggedIn = () => {
-    if(props.topMemory.loggedIn) {
+    if(props.topMemory.loggedIn === 'token accepted') {
       return (
         <div className='loginRegister'>
           <button><Link to={'/cart'} className='routeLink'>Cart</Link></button>
@@ -70,6 +99,7 @@ export default function Home(props) {
 
   return (
     <div onClick={detectClick}>
+      <h1>{props.topMemory.loggedIn}</h1>
       <div className='navigationHeader'>
         <div className='rightSide'>
           <button>Home</button>
@@ -113,6 +143,7 @@ export default function Home(props) {
               Loading...
             </button>
         }
+        {memory1.logoutLoading ? <h1>Loading...</h1> : ''}
       </div>
 
       <div className='card__container'>

@@ -3,7 +3,6 @@
 export default function ShowProfile(toggleEdit, memory1, handleSubmit, inputControl) {
   return (
     <>
-      {/* make this button working */}
       <button onClick={toggleEdit}>{memory1.editMode === 'authorized' ? 'Cancel' : 'Edit'}</button>
       <form onSubmit={handleSubmit}>
         <p>{memory1.origin.email}</p>
@@ -15,7 +14,7 @@ export default function ShowProfile(toggleEdit, memory1, handleSubmit, inputCont
           onChange={val => inputControl('password', val)} value={inputControl('password')} />
         {
           memory1.editMode === 'authorized' ?
-            <button type="submit">{memory1.submitLoading}</button> : ''
+            <button disabled={memory1.disableButton} type="submit">{memory1.submitLoading}</button> : ''
         }
       </form>
     </>

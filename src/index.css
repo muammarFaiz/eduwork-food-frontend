@@ -87,6 +87,32 @@ body {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   padding: 20px;
 }
+@media (max-width: 1060px) {
+  .card__container {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+@media (max-width: 900px) {
+  .card__container {
+    grid-template-columns: 1fr 1fr;
+  }
+  .navigationHeader {
+    grid-template-columns: min-content 1fr;
+  }
+  .loginRegister {
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 675px) {
+  .navigationHeader {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .card__container {
+    grid-template-columns: 1fr;
+  }
+}
 .product__card {
   /* height: 200px; */
   /* width: 200px; */

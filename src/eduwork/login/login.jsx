@@ -30,7 +30,7 @@ export default function Login(props) {
       } else {
         console.log(result);
         localStorage.setItem('token', result.user.token[result.user.token.length - 1])
-        props.topMemoryEdit('loggedIn', true)
+        props.topMemoryEdit('loggedIn', 'token accepted')
         navigate('/')
       }
     }, err => console.log('error second then'))

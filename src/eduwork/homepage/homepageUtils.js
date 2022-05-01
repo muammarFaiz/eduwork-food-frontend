@@ -113,12 +113,13 @@ const cardFilter = (cardData, memory1, card) => {
         }
       }
     })
+    console.log(phase3);
     const final = phase3.map((obj, i) => card(obj, i))
     return final
   }
 }
 
-const card1 = () => {
+const card1 = (addToCart, memory1) => {
   return (obj, i) => {
     return (
       <div className='product__card' key={i}>
@@ -131,7 +132,9 @@ const card1 = () => {
           <p>{obj.price}</p>
         </div>
         <div>
-          <button>Add to cart</button>
+          <button onClick={() => addToCart(obj._id)} disabled={memory1.addCartLoading}>{
+            memory1.addCartLoading ? 'Loading...' : 'Add To Cart'
+          }</button>
           <button>Buy</button>
         </div>
       </div>
@@ -163,7 +166,6 @@ const dropdownHandle = (memory1, setMemory1) => {
 
 const detectClick1 = (setMemory1, memory1) => {
   return val => {
-    let toggle
     const area = val.target.parentElement.attributes.class
     if ((!area || (area.value !== 'dropdownCategory' && area.value !== 'dropdownCategory_content active')) && memory1.dropdownCategory) {
       setMemory1(prev => {

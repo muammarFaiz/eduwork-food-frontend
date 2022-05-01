@@ -10,7 +10,9 @@ export default function Profile() {
     username: '', password: '',
     editMode: false,
     origin: {username: '', email: '', password: ''},
-    emailV: '', passwordV: ''
+    emailV: '', passwordV: '',
+    disableButton: false,
+    successEdit: false
   })
   
 // next sending the modified user
@@ -35,27 +37,62 @@ export default function Profile() {
     }, errr => console.log(errr))
   }, [])
 
-  const handleSubmit = () => {
-    axios.post('http://localhost:3001/auth/updateuser', {
-      data: {
-        username: memory1.username,
-        password: memory1.password
-      }
+  const handleSubmit = val => {
+    val.preventDefault()
+    setMemory1(prev => {
+      return {...prev, disableButton: true, submitLoading: 'Loading...'}
     })
-    .then(result => result.data, error => console.log(error))
-    .then(data => {
-      console.log(data);
-    }, err => console.log(err))
+    let tosend = {}
+    if(!memory1.username && !memory1.password) {
+      console.log('all empty...');
+      setMemory1(prev => {
+        return {...prev, disableButton: false, submitLoading: 'Submit', editMode: false, successEdit: ''}
+      })
+    } else {
+      if(!memory1.username) {
+        tosend.password = memory1.password
+      } else if(!memory1.password) {
+        tosend.username = memory1.username
+      } else {
+        tosend.username = memory1.username
+        tosend.password = memory1.password
+      }
+      axios({
+        url: 'http://localhost:3001/auth2/updateuser',
+        method: 'POST',
+        data: tosend,
+        headers: {authorization: `Bearer ${localStorage.getItem('token')}`}
+      })
+      .then(result => result.data, error => {
+        setMemory1(prev => {
+          return { ...prev, disableButton: false, submitLoading: 'Submit', editMode: false, successEdit: 'fail' }
+        })
+      })
+      .then(data => {
+        console.log(data);
+        setMemory1(prev => {
+        return { ...prev, disableButton: false, submitLoading: 'Submit', editMode: false, successEdit: 'success' }
+        // add fail success warning
+        })
+      }, err => {
+        console.log(err)
+        setMemory1(prev => {
+          return { ...prev, disableButton: false, submitLoading: 'Submit', editMode: false, successEdit: 'fail' }
+        })
+      })
+    }
   }
 
   const inputControl = (name, value) => {
     if(!value) {
+      // for input value...
       if(memory1.editMode === 'authorized') {
         return memory1[name]
       } else {
         return memory1.origin[name]
       }
     } else {
+      // for input onchange...
       setMemory1(prev => {
         const clone = {...prev}
         clone[name] = value.target.value
@@ -71,7 +108,7 @@ export default function Profile() {
         return {...prev, editMode: false}
       } else {
         // try edit
-        return {...prev, editMode: 'verify'}
+        return {...prev, editMode: 'verify', successEdit: ''}
       }
     })
   }
@@ -91,7 +128,7 @@ export default function Profile() {
       return {...prev, submitLoading: 'Loading...'}
     })
     axios({
-      url: 'http://localhost:3001/auth2/updateuser',
+      url: 'http://localhost:3001/auth2/verify2',
       method: 'POST',
       headers: {authorization: `Bearer ${localStorage.getItem('token')}`},
       data: {
@@ -104,7 +141,7 @@ export default function Profile() {
       if(data.status === 'accepted') {
         console.log('user accepted');
         setMemory1(prev => {
-          return {...prev, submitLoading: 'Submit', editMode: 'authorized'}
+          return {...prev, submitLoading: 'Submit', editMode: 'authorized', emailV: '', passwordV: ''}
         })
       } else {
         console.log('user rejected');
@@ -115,6 +152,7 @@ export default function Profile() {
     }, error => console.log(error.message))
   }
 
+
   return (
     <>
     <div className="navigationHeader">
@@ -123,14 +161,15 @@ export default function Profile() {
       </div>
       <div className="loginRegister">
         <button><Link to={'/cart'} className='routeLink'>Cart</Link></button>
-        <button>Log Out</button>
+        {/* <button>Log Out</button> */}
       </div>
     </div>
 
     <div className="registerWrapper">
       <div className="registerCard">
+        <h1>{memory1.successEdit}</h1>
         {userInterface()}
-        <h1>{memory1.editMode}</h1>
+        <p>{memory1.editUserStatus}</p>
       </div>
     </div>
     </>
