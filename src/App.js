@@ -6,13 +6,18 @@ import Register from './eduwork/register/register'
 import Login from './eduwork/login/login'
 import Profile from './eduwork/userProfile/userProfile'
 import Cart from './eduwork/cart/cartPage'
+import Alamat from './eduwork/alamat/alamat'
 
 import './App.css';
 import { useState } from 'react';
+import SelectAlamat from './eduwork/selectalamat/selectalamat'
+import Confirmation from './eduwork/confirmation/confirmation'
 
 function App() {
   const [memory2, setMemory2] = useState({
-    loggedIn: false
+    loggedIn: false,
+    toBuy: false,
+    selectedAlamat: false
   })
 
   const topMemoryEdit = (key, value) => {
@@ -58,7 +63,7 @@ function App() {
         memory2.loggedIn ?
         <Routes>
             <Route path='/' element={
-              <Home topMemoryEdit={topMemoryEdit} topMemory={memory2} />
+              <Home topMemoryEdit={topMemoryEdit} topMemory={memory2} setMemory2={setMemory2} />
             }/>
             <Route path='register' element={
               memory2.loggedIn === 'token accepted' ?
@@ -77,7 +82,22 @@ function App() {
             }/>
             <Route path='cart' element={
               memory2.loggedIn === 'token accepted' ?
-              <Cart topMemoryEdit={topMemoryEdit} topMemory={memory2} /> :
+              <Cart topMemoryEdit={topMemoryEdit} setMemory={setMemory2} topMemory={memory2} /> :
+              <Navigate to={'/'} />
+            }/>
+            <Route path='alamat' element={
+              memory2.loggedIn === 'token accepted' ?
+              <Alamat topMemoryEdit={topMemoryEdit} topMemory={memory2} /> :
+              <Navigate to={'/'} />
+            }/>
+            <Route path='selectalamat' element={
+            memory2.loggedIn === 'token accepted' ?
+            <SelectAlamat setMemory={setMemory2} topMemory={memory2} /> :
+            <Navigate to={'/'} />
+          }/>
+          <Route path='confirmation' element={
+              memory2.loggedIn === 'token accepted' && memory2.selectedAlamat !== false ?
+              <Confirmation setMemory={setMemory2} topMemory={memory2} /> :
               <Navigate to={'/'} />
             }/>
             <Route path='*' element={

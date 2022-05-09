@@ -5,6 +5,8 @@
   background-color: #a0ecf9;
   padding: 1rem 1rem 1rem 3rem;
   border-radius: 7px;
+  border: solid 1px green;
+  margin: 5px 0;
 }
 .cartCard h1 {
   margin: 0 0 20px 0;

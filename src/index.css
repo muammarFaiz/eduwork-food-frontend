@@ -32,12 +32,13 @@ body {
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  top: 20%;
+  top: 19%;
   background-color: lightblue;
   padding: 5px 15px;
   border-radius: 4px;
   transition-property: opacity;
   transition-duration: 200ms;
+  box-shadow: 4px 4px 5px 0 black;
 }
 .dropdownCategory > .dropdownCategory_content.active {
   opacity: 1;
@@ -84,7 +85,7 @@ body {
   display: grid;
   background-color: rgb(115, 209, 221);;
   gap: 1rem;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   padding: 20px;
 }
 @media (max-width: 1060px) {
@@ -145,4 +146,19 @@ body {
 
 h1.warningInfo {
   text-align: center;
+}
+
+.pagesButton {
+  text-align: center;
+}
+.pagesNumber {
+  display: inline-block;
+}
+.pagesNumber button {
+  /* background: none; */
+  border: none;
+  cursor: pointer;
+}
+.activePage {
+  background-color: rgb(143, 143, 143);
 }

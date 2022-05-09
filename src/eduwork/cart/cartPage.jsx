@@ -1,26 +1,17 @@
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import './cartStyle.css'
-import mege from './mege.png'
 
-export default function Cart() {
+export default function Cart(props) {
   const [memory1, setMemory1] = useState({
     cart: [],
     cartLoading: false,
-    saveButton: false
+    quantityUpdated: false
   })
   const initialUseEffect = useRef(0)
-
-  useEffect(() => {
-    initialUseEffect.current++
-    if(initialUseEffect.current > 2) {
-      setMemory1(prev => {
-        return {...prev, saveButton: true}
-      })
-    }
-  }, [memory1.cart])
+  const navigate = useNavigate()
 
   useEffect(() => {
     setMemory1(prev => {
@@ -66,7 +57,7 @@ export default function Cart() {
       }
       i++
     }
-    // request server each modify or after user close the page and do bulk modify?
+
     let i2 = 0, reversed = ''
     while (i2 < reverseStr.length) {
       reversed = reversed + reverseStr[(reverseStr.length - 1) - i2]
@@ -92,11 +83,11 @@ export default function Cart() {
         } else {return obj}
       })
       clone.cart = modCart
-      return clone
+      return {...clone, quantityUpdated: true}
     })
   }
 
-  const deleteMe = (val, id) => {
+  const deleteMe = (id) => {
     setMemory1(prev => {
       const clone = {...prev}
       const newArr = prev.cart.filter(obj => {
@@ -106,7 +97,7 @@ export default function Cart() {
       })
       clone.cart = newArr
       console.log(clone.cart);
-      return clone
+      return {...clone, quantityUpdated: true}
     })
   }
 
@@ -122,7 +113,28 @@ export default function Cart() {
     }).then(result => result.data, err => console.log(err))
     .then(data => {
       console.log(data)
+      if (data._id) {
+        setMemory1(prev => {
+          return {...prev, quantityUpdated: false}
+        })
+      }
     }, err => console.log(err))
+  }
+
+  const buyMe = (prod) => {
+
+    props.setMemory(prev => {
+      return {...prev, toBuy: prod}
+    })
+    navigate('/selectalamat')
+  }
+
+  const saveButton = () => {
+    if(memory1.cart.length === 0) {
+      return ''
+    } else {
+      return memory1.quantityUpdated ? <button onClick={saveCart}>Save Changes</button> : ''
+    }
   }
 
   const cartCard = () => {
@@ -143,7 +155,8 @@ export default function Cart() {
                 </div>
                 <p>{prod.product.price}</p>
                 <p>{totalPrice(prod)}</p>
-                <button onClick={val => deleteMe(val, prod._id)}>Delete</button>
+                <button onClick={val => deleteMe(prod._id)}>Delete</button>
+                <button onClick={val => buyMe(prod)}>Buy</button>
               </div>
             </div>
           </div>
@@ -151,7 +164,7 @@ export default function Cart() {
       })
       return cards
     } else {
-      return <h1>empty...</h1>
+      return <h1>your cart is empty...</h1>
     }
   }
 
@@ -169,7 +182,8 @@ export default function Cart() {
 
       <div className="cartWrapper">
         {cartCard()}
-        {memory1.saveButton ? <button onClick={saveCart}>Save Changes</button> : ''}
+        {saveButton()}
+        {memory1.cart.length === 0 ? '' : <button onClick={() => buyMe(memory1.cart)}>Checkout</button>}
       </div>
     </>
   )

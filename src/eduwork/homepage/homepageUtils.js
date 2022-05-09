@@ -1,12 +1,9 @@
+import { useNavigate } from "react-router-dom";
 
 
-const initialReq = (axios, setCardData, setMemory1) => {
+const initialReq = (axios, setMemory1) => {
   console.log('use effect home is ran...');
-  axios.get('http://localhost:3001/index')
-    .then(ful => ful.data, rej => console.log(rej))
-    .then(fulData => {
-      setCardData(fulData)
-    })
+
   axios.get('http://localhost:3001/categories')
     .then(fulfil => fulfil.data, rej => console.log(rej))
     .then(fulfilData => {
@@ -26,7 +23,7 @@ const initialReq = (axios, setCardData, setMemory1) => {
 const toggleButton1 = (setMemory1, searchbarRef) => {
   return (val) => {
     setMemory1(prev => {
-      return { ...prev, searchbar: searchbarRef.current }
+      return {...prev, searchbar: searchbarRef.current}
     })
     const bgColor = val.target.style
     if (bgColor.color === 'black') {
@@ -38,14 +35,14 @@ const toggleButton1 = (setMemory1, searchbarRef) => {
         // if tag button clicked...
         if (val.target.parentElement.attributes.class.value === 'tagsDiv') {
           if (prev.toggleTags.includes(val.target.innerText)) {
-            const tagIndex = prev.toggleTags.indexOf(val.target.innerText)
-            clone.toggleTags.splice(tagIndex, 1)
+            const newArr = prev.toggleTags.filter(str => str !== val.target.innerText)
+            clone.toggleTags = newArr
             return clone
           } else { return clone }
         } else {
           if (prev.toggleCategory.includes(val.target.innerText)) {
-            const categoryIndex = prev.toggleCategory.indexOf(val.target.innerText)
-            clone.toggleCategory.splice(categoryIndex, 1)
+            const newArr = prev.toggleCategory.filter(str => str !== val.target.innerText)
+            clone.toggleCategory = newArr
             return clone
           } else { return clone }
         }
@@ -75,51 +72,26 @@ const toggleButton1 = (setMemory1, searchbarRef) => {
   }
 }
 
-const cardFilter = (cardData, memory1, card) => {
+const cardFilter = (cardData, card) => {
   return () => {
-    const phase1 = cardData.filter((obj, i) => {
-      const catString = obj.category.name
-      if (memory1.toggleCategory.length == 0) {
-        return obj
-      } else {
-        if (memory1.toggleCategory.includes(catString.charAt(0).toUpperCase() + catString.slice(1))) {
-          console.log('a product included');
-          return obj
-        }
-      }
-    })
-    const phase2 = phase1.filter((obj, i) => {
-      const tagArray = obj.tag
-      if (memory1.toggleTags.length == 0) {
-        return true
-      } else {
-        let accepted = false
-        tagArray.forEach(tagObj => {
-          if (memory1.toggleTags.includes(tagObj.name.charAt(0).toUpperCase() + tagObj.name.slice(1))) {
-            accepted = true
-          }
-        });
-        return accepted
-      }
-    })
-    const phase3 = phase2.filter((obj, i) => {
-      const productName = obj.productName
-      if (memory1.searchbar == '') {
-        return true
-      } else {
-        const re = RegExp(memory1.searchbar, 'i')
-        if (productName.match(re)) {
-          return true
-        }
-      }
-    })
-    console.log(phase3);
-    const final = phase3.map((obj, i) => card(obj, i))
+    const final = cardData.map((obj, i) => card(obj, i))
     return final
   }
 }
 
-const card1 = (addToCart, memory1) => {
+const card1 = (addToCart, memory1, navigate, setMemory2) => {
+  const buyFromHomePage = (cardObj) => {
+    const tosave = {
+      _id: 'from homepage',
+      product: cardObj,
+      quantity: 1
+    }
+    console.log(tosave);
+    setMemory2(prev => {
+      return {...prev, toBuy: tosave}
+    })
+
+  }
   return (obj, i) => {
     return (
       <div className='product__card' key={i}>
@@ -135,12 +107,13 @@ const card1 = (addToCart, memory1) => {
           <button onClick={() => addToCart(obj._id)} disabled={memory1.addCartLoading}>{
             memory1.addCartLoading ? 'Loading...' : 'Add To Cart'
           }</button>
-          <button>Buy</button>
+          <button onClick={val => buyFromHomePage(obj)}>Buy</button>
         </div>
       </div>
     )
   }
 }
+
 
 const submitSearch1 = (setMemory1, searchbarRef) => {
   return () => {

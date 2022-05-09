@@ -1,9 +1,10 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import AskLogin from "./askToLogin"
 
 import ShowProfile from "./showProfile"
+import './profileStyle.css'
 
 export default function Profile() {
   const [memory1, setMemory1] = useState({submitLoading: 'Submit',
@@ -14,8 +15,7 @@ export default function Profile() {
     disableButton: false,
     successEdit: false
   })
-  
-// next sending the modified user
+  const navigate = useNavigate()
 
   useEffect(() => {
     axios({
@@ -72,7 +72,7 @@ export default function Profile() {
         console.log(data);
         setMemory1(prev => {
         return { ...prev, disableButton: false, submitLoading: 'Submit', editMode: false, successEdit: 'success' }
-        // add fail success warning
+        
         })
       }, err => {
         console.log(err)
@@ -113,16 +113,20 @@ export default function Profile() {
     })
   }
 
+  const toAlamat = () => {
+    navigate('/alamat')
+  }
+
   const userInterface = () => {
     if(memory1.editMode === 'verify' || memory1.editMode === 'rejected') {
       return AskLogin(handleSubmitVerify, inputControl, memory1)
     } else {
-      return ShowProfile(toggleEdit, memory1, handleSubmit, inputControl)
+      return ShowProfile(toggleEdit, memory1, handleSubmit, inputControl, toAlamat)
     }
   }
 
   const handleSubmitVerify = val => {
-    // request server to compare their jwt with their email and password
+
     val.preventDefault()
     setMemory1(prev => {
       return {...prev, submitLoading: 'Loading...'}

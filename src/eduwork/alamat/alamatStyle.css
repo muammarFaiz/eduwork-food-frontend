@@ -1,0 +1,23 @@
+.alamatWrapper {
+  display: flex;
+}
+
+.alamatList {
+  border-right: solid 1px;
+  padding: 1rem;
+}
+.alamatList .trex {
+  display: block;
+  margin: 1rem 0;
+}
+.alamatCard {
+  flex-grow: 1;
+  padding: 2rem;
+}
+.alamatCard > form {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.thisActive {
+  background-color: aqua;
+}

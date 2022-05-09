@@ -1,0 +1,24 @@
+.scroll_bg {
+  width: 20rem;
+  margin: 10% auto;
+}
+.scroll_div {
+  background-color: brown;
+  width: 20rem;
+  height: 10rem;
+  overflow-y: scroll;
+  padding: 5px 10px;
+  position: absolute;
+}
+.inputAddr {
+  width: 98%;
+}
+
+.hide {
+  display: none;
+}
+.object_one {
+  border: solid 1px black;
+  padding: 2px 4px;
+  font-size: 21px;
+}

@@ -1,9 +1,10 @@
 
 
-export default function ShowProfile(toggleEdit, memory1, handleSubmit, inputControl) {
+export default function ShowProfile(toggleEdit, memory1, handleSubmit, inputControl, toAlamat) {
   return (
     <>
-      <button onClick={toggleEdit}>{memory1.editMode === 'authorized' ? 'Cancel' : 'Edit'}</button>
+      <button onClick={toggleEdit}>{memory1.editMode === 'authorized' ? 'Cancel' : 'Edit Profile'}</button>
+      <button onClick={toAlamat}>Daftar Alamat</button>
       <form onSubmit={handleSubmit}>
         <p>{memory1.origin.email}</p>
         <label htmlFor="username">Username:</label>

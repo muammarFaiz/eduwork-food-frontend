@@ -1,0 +1,17 @@
+
+.confirmationPage {
+  padding: 40px 150px;
+}
+.confirmProductCard {
+  display: flex;
+  gap: 20px;
+  margin: 10px 0;
+  border: solid 1px green;
+  border-radius: 7px;
+}
+.confirmationAlamatCard {
+  padding: 0 50px;
+  border: solid 1px green;
+  border-radius: 7px;
+  /* hargaaaaaaa */
+}

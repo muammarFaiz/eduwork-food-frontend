@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 import initialReq, { card1, cardFilter, detectClick1, dropdownHandle, submitSearch1, toggleButton1 } from './homePageUtils'
+import PageNav from './pagesNav'
 
 
 export default function Home(props) {
@@ -15,11 +16,14 @@ export default function Home(props) {
     toggleTags: [],
     searchbar: '',
     logoutLoading: false,
-    addCartLoading: false
+    addCartLoading: false,
+    totalCard: 0
   })
   const searchbarRef = useRef()
+  const initialRender = useRef(true)
+  const navigate = useNavigate()
 
-  useEffect(() => initialReq(axios, setCardData, setMemory1), [])
+  useEffect(() => initialReq(axios, setMemory1), [])
 
   const toggleButton = toggleButton1(setMemory1, searchbarRef)
 
@@ -42,11 +46,26 @@ export default function Home(props) {
       })
     }, err => console.log(err))
   }
-  const card = card1(addToCart, memory1)
+
+  useEffect(() => {
+    if(initialRender.current) {
+      initialRender.current = false
+    } else {
+      if(props.topMemory.toBuy) {
+        if(props.topMemory.loggedIn === 'token accepted') {
+          navigate('/selectalamat')
+        } else {
+          alert('you need to login')
+        }
+      }
+    }
+  }, [props.topMemory.toBuy])
+
+  const card = card1(addToCart, memory1, navigate, props.setMemory2)
 
   const dropdownHandler = dropdownHandle(memory1, setMemory1)
 
-  const cardToShow = cardFilter(cardData, memory1, card)
+  const cardToShow = cardFilter(cardData, card)
 
   const submitSearch = submitSearch1(setMemory1, searchbarRef)
 
@@ -76,7 +95,36 @@ export default function Home(props) {
         })
       }
     }, error => console.log({status: 'error 2', data: error}))
-  } // check if this logout user works properly
+  }
+
+  useEffect(() => {
+    // console.log('category or tag modified...');
+    axios({
+      url: 'http://localhost:3001/index',
+      method: 'GET',
+      headers: { authorization: `Bearer ${localStorage.getItem('token')}` },
+      params: {
+        category: memory1.toggleCategory.length !== 0 ? memory1.toggleCategory.map(str => str.toLowerCase()) : [],
+        tag: memory1.toggleTags !== 0 ? memory1.toggleTags.map(str => str.toLowerCase()) : [],
+        searchbar: memory1.searchbar
+      }
+    })
+      .then(fulfil => fulfil.data, rej => console.log(rej))
+      .then(fulfilData => {
+        console.log(fulfilData);
+        setCardData(fulfilData.result)
+        setMemory1(prev => {
+          return {...prev, totalCard: fulfilData.total}
+        })
+      })
+  }, [memory1.toggleTags, memory1.toggleCategory, memory1.searchbar])
+
+  const fromPageNav = (result, totalDocs) => {
+    setMemory1(prev => {
+      return {...prev, totalCard: totalDocs}
+    })
+    setCardData(result)
+  }
 
   const ifLoggedIn = () => {
     if(props.topMemory.loggedIn === 'token accepted') {
@@ -99,7 +147,6 @@ export default function Home(props) {
 
   return (
     <div onClick={detectClick}>
-      <h1>{props.topMemory.loggedIn}</h1>
       <div className='navigationHeader'>
         <div className='rightSide'>
           <button>Home</button>
@@ -115,9 +162,7 @@ export default function Home(props) {
                       </button>
                     )
                   }) :
-                  <button>
-                    Loading...
-                  </button>
+                  <button>Loading...</button>
               }
             </div>
           </div>
@@ -139,18 +184,15 @@ export default function Home(props) {
                 </button>
               )
             }) :
-            <button>
-              Loading...
-            </button>
+            <button>Loading...</button>
         }
         {memory1.logoutLoading ? <h1>Loading...</h1> : ''}
       </div>
 
       <div className='card__container'>
-        {cardData ?
-         cardToShow() :
-        <h1>Loading...</h1>}
+        {cardData ? cardToShow() : <h1>Loading...</h1>}
       </div>
+      <PageNav totalDoc={memory1.totalCard} memory1={memory1} updateCards={fromPageNav} />
     </div>
   )
 }
