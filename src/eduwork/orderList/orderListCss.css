@@ -1,0 +1,19 @@
+.eachAddr {
+  border: solid 1px black;
+  padding: 50px 100px;
+}
+.orderCardInner {
+  display: flex;
+  gap: 30px;
+  margin: 20px 50px;
+  border: solid 1px green;
+  border-radius: 5px;
+}
+.orderCardInner img {
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 5px;
+}
+.orderCardDetail > h3, p {
+  margin: 1px 0;
+}

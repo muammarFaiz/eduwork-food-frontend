@@ -1,0 +1,8 @@
+.verifyUser {
+  margin: 50px 300px;
+  /* padding: 0; */
+}
+.verifyForm {
+  display:  grid;
+  gap: 10px;
+}

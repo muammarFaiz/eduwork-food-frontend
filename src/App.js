@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import Home from './eduwork/homepage/home'
 import Register from './eduwork/register/register'
 import Login from './eduwork/login/login'
-import Profile from './eduwork/userProfile/userProfile'
+// import Profile from './eduwork/userProfile/userProfile'
 import Cart from './eduwork/cart/cartPage'
 import Alamat from './eduwork/alamat/alamat'
 
@@ -12,12 +12,21 @@ import './App.css';
 import { useState } from 'react';
 import SelectAlamat from './eduwork/selectalamat/selectalamat'
 import Confirmation from './eduwork/confirmation/confirmation'
+import Invoice from './eduwork/invoice/invoice'
+import OrderList from './eduwork/orderList/orderList'
+import Profile from './eduwork/profile/profile'
+import Verify from './eduwork/verifyuser/verifyuser'
 
 function App() {
   const [memory2, setMemory2] = useState({
     loggedIn: false,
     toBuy: false,
-    selectedAlamat: false
+    selectedAlamat: false,
+    confirmedBuy: false,
+    toEditProfile: {
+      allowed: false,
+      email: false
+    }
   })
 
   const topMemoryEdit = (key, value) => {
@@ -77,7 +86,7 @@ function App() {
             }/>
             <Route path='profile' element={
               memory2.loggedIn === 'token accepted' ?
-              <Profile topMemoryEdit={topMemoryEdit} topMemory={memory2} /> :
+              <Profile setMemory={setMemory2} topMemory={memory2} /> :
               <Navigate to={'/'} />
             }/>
             <Route path='cart' element={
@@ -100,7 +109,22 @@ function App() {
               <Confirmation setMemory={setMemory2} topMemory={memory2} /> :
               <Navigate to={'/'} />
             }/>
-            <Route path='*' element={
+          <Route path='invoice' element={
+              memory2.confirmedBuy ?
+              <Invoice setMemory={setMemory2} topMemory={memory2} /> :
+              <Navigate to={'/'} />
+            }/>
+          <Route path='orderlist' element={
+              memory2.loggedIn === 'token accepted' ?
+              <OrderList setMemory={setMemory2} topMemory={memory2} /> :
+              <Navigate to={'/'} />
+            }/>
+          <Route path='verifyuser' element={
+              memory2.loggedIn === 'token accepted' ?
+              <Verify setMemory={setMemory2} topMemory={memory2} /> :
+              <Navigate to={'/'} />
+            }/>
+          <Route path='*' element={
               <Navigate to={'/'} />
             }/>
         </Routes> :

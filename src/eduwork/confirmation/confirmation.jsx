@@ -1,5 +1,6 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 
 import './confirmationCss.css'
 
@@ -8,6 +9,7 @@ export default function Confirmation(props) {
     alamat: props.topMemory.selectedAlamat,
     products: props.topMemory.toBuy
   })
+  const navigate = useNavigate()
 
   const totalPrice = (prod) => {
     let priceInt = ''
@@ -48,7 +50,6 @@ export default function Confirmation(props) {
     } else {
       tobuyArr = [tobuy]
     }
-    // return <h1>hhe test</h1>
 
     return tobuyArr.map((obj, i) => {
       const imageName = obj.product.image_url.split('/')[obj.product.image_url.split('/').length - 1]
@@ -65,6 +66,33 @@ export default function Confirmation(props) {
       )
     })
   }
+
+  const saveOrder = val => {
+    let prodArr
+    if(Array.isArray(m.products)) {prodArr = m.products}
+    else {prodArr = [m.products]}
+    console.log({ order: prodArr, destinationId: m.alamat._id });
+    axios({
+      url: 'http://localhost:3001/api/order',
+      method: 'POST',
+      headers: {authorization: `Bearer ${localStorage.getItem('token')}`},
+      data: {order: prodArr, destinationId: m.alamat._id}
+    }).then(res => res.data, err => console.log(err))
+    .then(data => {
+      console.log(data);
+      if(data.status === 'success') {
+        props.setMemory(prev => {
+          return {...prev, confirmedBuy: true}
+        })
+      } else {alert('something wrong from server')}
+    }, err => console.log(err))
+  }
+
+  useEffect(() => {
+    if(props.topMemory.confirmedBuy) {
+      navigate('/invoice')
+    }
+  }, [props.topMemory.confirmedBuy])
 
   return (
     <>
@@ -89,7 +117,7 @@ export default function Confirmation(props) {
         <p>Provinsi: {m.alamat.provinsi}</p>
         <p>Detail: {m.alamat.detail}</p>
       </div>
-      <button>Confirm</button>
+      <button onClick={saveOrder}>Confirm</button>
     </div>
     </>
   )

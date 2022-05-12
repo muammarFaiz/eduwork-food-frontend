@@ -24,8 +24,21 @@ const [memory, setMemory] = useState({
       console.log(data)
       setMemory(prev => {
         const clone = {...prev}
-        clone.data = data.addressArr
-        clone.now = data.addressArr[0]
+        if(!data.err) {
+          clone.data = data.addressArr
+          clone.now = data.addressArr[0]
+        } else {
+          const x = {
+            "title": 'Empty',
+            "kelurahan": "",
+            "kecamatan": "",
+            "kabupaten": "",
+            "provinsi": "",
+            "detail": "you don't have any address registered here"
+          }
+          clone.data = [x]
+          clone.now = x
+        }
         return clone
       })
     }, err => console.log(err))
@@ -46,7 +59,6 @@ const [memory, setMemory] = useState({
   const editmode = (reset) => {
     setMemory(prev =>{
       if(reset === 'reset') {
-        // use id instead of title
         const currentCard = prev.data.find(obj => obj._id === prev.now._id)
        return {...prev, editmode: false, editbutton: 'Edit', now: currentCard} 
       } else if(reset === 'delete') {
@@ -86,7 +98,6 @@ const [memory, setMemory] = useState({
     })
   }
 
-  // save for alamat baru
   const handleSave = () => {
     let isEmpty = false
     Object.values(memory.now).forEach(str => {
@@ -98,11 +109,9 @@ const [memory, setMemory] = useState({
     if(memory.addNew) {
       method = 'POST'
       const {_id, ...tosend2} = memory.now
-      // tosend = object
       tosend = tosend2
     } else {
       method = 'PUT'
-      // tosend = array
       tosend = memory.data.map(obj => {
         if (obj._id === memory.now._id) {
           return memory.now
@@ -160,6 +169,7 @@ const [memory, setMemory] = useState({
         {/* <button>Log Out</button> */}
       </div>
     </div>
+
     <div className="alamatWrapper">
       <div className="alamatList">
         <button onClick={toAdd}>Alamat Baru</button>

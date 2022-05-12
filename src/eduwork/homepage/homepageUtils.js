@@ -97,7 +97,7 @@ const card1 = (addToCart, memory1, navigate, setMemory2) => {
       <div className='product__card' key={i}>
         <h1>{obj.productName}</h1>
         <img src={`http://localhost:3001/images/${obj.image_url.split('/')[obj.image_url.split('/').length - 1]
-          }`} alt="" />
+          }`} alt={obj.image_url.split('/')[obj.image_url.split('/').length - 1]} />
         <div className='cardDetails'>
           <p>category: {obj.category.name}</p>
           <p>tag: {obj.tag.map(obj => obj.name).join(', ')}</p>

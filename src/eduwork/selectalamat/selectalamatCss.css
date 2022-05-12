@@ -22,3 +22,20 @@
   padding: 2px 4px;
   font-size: 21px;
 }
+
+.addrSelectPageGround {
+  min-height: 500px;
+}
+.selectAddrButton {
+  display: flex;
+  padding: 0 0 0 20px;
+  background-color: green;
+  width: fit-content;
+  border-radius: 5px;
+}
+.selectAddrButton > * {
+  /* border: solid 1px black; */
+}
+.selectAddrButton p {
+  margin: auto 0;
+}

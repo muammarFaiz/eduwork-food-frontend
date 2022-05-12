@@ -1,10 +1,15 @@
+import { useNavigate } from "react-router-dom"
 
 
-export default function ShowProfile(toggleEdit, memory1, handleSubmit, inputControl, toAlamat) {
+export default function ShowProfile(memory1, handleSubmit, inputControl) {
+
+const navigate = useNavigate()
+
   return (
     <>
-      <button onClick={toggleEdit}>{memory1.editMode === 'authorized' ? 'Cancel' : 'Edit Profile'}</button>
-      <button onClick={toAlamat}>Daftar Alamat</button>
+      {/* <button onClick={toggleEdit}>{memory1.editMode === 'authorized' ? 'Cancel' : 'Edit Profile'}</button> */}
+      <button onClick={val => navigate('/alamat')}>Daftar Alamat</button>
+      <button onClick={val => navigate('/orderlist')}>Daftar Order</button>
       <form onSubmit={handleSubmit}>
         <p>{memory1.origin.email}</p>
         <label htmlFor="username">Username:</label>

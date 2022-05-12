@@ -1,0 +1,10 @@
+.userProfileWrapper {
+  padding: 50px 31%;
+}
+.profileForm1 {
+  display:  grid;
+  gap: 10px;
+}
+.email_p {
+  margin: 12px 0;
+}

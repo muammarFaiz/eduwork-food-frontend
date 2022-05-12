@@ -1,8 +1,11 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { RiArrowDropDownLine } from "react-icons/ri";
+import { MdOutlineArrowDropDown } from "react-icons/md";
 import './selectalamatCss.css'
+
+const cg = console.log
 
 export default function SelectAlamat(props) {
   const [m, setm] = useState({
@@ -13,6 +16,7 @@ export default function SelectAlamat(props) {
     selectedObj: false
   })
   const navigate = useNavigate()
+  const dropdown_node = useRef(null)
 
   useEffect(() => {
     axios({
@@ -34,18 +38,29 @@ export default function SelectAlamat(props) {
     }, err => console.log(err))
   }, [])
 
+  useEffect(() => {
+    console.log(m.showdropdown);
+  }, [m.showdropdown])
+
   const respond = (val) => {
-    setm(prev => {
-      if (val.target.attributes.class !== undefined) {
-        if (val.target.attributes.class.value !== 'inputAddr') {
-          return {...prev, showdropdown: "scroll_div hide"}
+    console.log('the func run');
+    console.log(dropdown_node.current);
+    console.log(val.target);
+    console.log(dropdown_node.current.contains(val.target));
+    if (dropdown_node.current.contains(val.target)) {
+      console.log('clicked....');
+      setm(prev => {
+        if (prev.showdropdown === 'scroll_div hide') {
+          return {...prev, showdropdown: 'scroll_div'}
         } else {
-          return {...prev, showdropdown: "scroll_div"}
+          return {...prev, showdropdown: 'scroll_div hide'}
         }
-      } else {
-        return {...prev, showdropdown: "scroll_div hide"}
-      }
-    })
+      })
+    } else {
+      setm(prev => {
+        return { ...prev, showdropdown: 'scroll_div hide'}
+      })
+    }
   }
 
   const handleSelect = (val, obj) => {
@@ -63,44 +78,50 @@ export default function SelectAlamat(props) {
   } else {
     return (
       <>
-        <div onClick={val => respond(val)}>
-        <div className="navigationHeader">
-          <div className="rightSide">
-            <button><Link to={'/home'} className='routeLink'>Home</Link></button>
+        <div 
+          onClick={val => respond(val)}
+        className='addrSelectPageGround'>
+          <div className="navigationHeader">
+            <div className="rightSide">
+              <button><Link to={'/home'} className='routeLink'>Home</Link></button>
+            </div>
+            <div className="loginRegister">
+              <button><Link to={'/profile'} className='routeLink'>Profile</Link></button>
+              {/* <button>Log Out</button> */}
+            </div>
           </div>
-          <div className="loginRegister">
-            <button><Link to={'/profile'} className='routeLink'>Profile</Link></button>
-            {/* <button>Log Out</button> */}
+    
+          <div className="scroll_bg">
+            <div className="selectAddrButton"
+              ref={ref => {dropdown_node.current = ref}}
+            >
+              <p>{m.selected}</p>
+              <MdOutlineArrowDropDown size={30} />
+            </div>
+              <div className={m.showdropdown}>
+                {
+                  m.addressArr === 'none' ? <h1>you don't have any address registered</h1> :
+                  m.addressArr.length === 0 ? <h1>you don't have any address registered</h1> :
+                  m.addressArr.map((obj, i) => {
+                    return <div className="object_one" onClick={
+                      val => handleSelect(val, obj)
+                    } key={i}>{obj.title}</div>
+                  })
+                }
+              </div>
+              {m.selectedObj ?
+              <div>
+                <h3>Title: {m.selectedObj.title}</h3>
+                <h3>Provinsi: {m.selectedObj.provinsi}</h3>
+                <h3>Kelurahan: {m.selectedObj.kelurahan}</h3>
+                <h3>Kecamatan: {m.selectedObj.kecamatan}</h3>
+                <h3>Kabupaten: {m.selectedObj.kabupaten}</h3>
+                <h3>Detail: {m.selectedObj.detail}</h3>
+              </div> : ''}
+              {m.selected === 'select your address' ? '' : <button onClick={
+                  () => navigate('/confirmation')
+              }>Continue</button>}
           </div>
-        </div>
-  
-        <div className="scroll_bg">
-        <input type="text" className='inputAddr' onFocus={
-          val => respond(val)
-        } value={m.selected} readOnly />
-          <div className={m.showdropdown}>
-            <div className="object_one" onClick={val => handleSelect(val)}>Lorem ipsum dolor sit.</div>
-            {
-              m.addressArr === 'none' ? <h1>unknown error, addressArr: 'none'</h1> :
-              m.addressArr.length === 0 ? <h1>you don't have an address</h1> :
-              m.addressArr.map((obj, i) => {
-                return <div className="object_one" onClick={val => handleSelect(val, obj)} key={i}>{obj.title}</div>
-              })
-            }
-          </div>
-          {m.selectedObj ?
-          <div>
-            <h3>Title: {m.selectedObj.title}</h3>
-            <h3>Provinsi: {m.selectedObj.provinsi}</h3>
-            <h3>Kelurahan: {m.selectedObj.kelurahan}</h3>
-            <h3>Kecamatan: {m.selectedObj.kecamatan}</h3>
-            <h3>Kabupaten: {m.selectedObj.kabupaten}</h3>
-            <h3>Detail: {m.selectedObj.detail}</h3>
-          </div> : ''}
-          {m.selected === 'select your address' ? '' : <button onClick={
-              () => navigate('/confirmation')
-          }>Continue</button>}
-        </div>
       </div>
       </>
     )

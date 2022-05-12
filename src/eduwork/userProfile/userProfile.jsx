@@ -6,7 +6,7 @@ import AskLogin from "./askToLogin"
 import ShowProfile from "./showProfile"
 import './profileStyle.css'
 
-export default function Profile() {
+export default function Xrofile() {
   const [memory1, setMemory1] = useState({submitLoading: 'Submit',
     username: '', password: '',
     editMode: false,
@@ -15,7 +15,6 @@ export default function Profile() {
     disableButton: false,
     successEdit: false
   })
-  const navigate = useNavigate()
 
   useEffect(() => {
     axios({
@@ -34,10 +33,11 @@ export default function Profile() {
           }
         })
       }
-    }, errr => console.log(errr))
+    }, err => console.log(err))
   }, [])
 
   const handleSubmit = val => {
+    console.log('HANDLE SUBMIT RUNNING');
     val.preventDefault()
     setMemory1(prev => {
       return {...prev, disableButton: true, submitLoading: 'Loading...'}
@@ -68,18 +68,18 @@ export default function Profile() {
           return { ...prev, disableButton: false, submitLoading: 'Submit', editMode: false, successEdit: 'fail' }
         })
       })
+
       .then(data => {
         console.log(data);
         setMemory1(prev => {
         return { ...prev, disableButton: false, submitLoading: 'Submit', editMode: false, successEdit: 'success' }
-        
         })
-      }, err => {
-        console.log(err)
-        setMemory1(prev => {
-          return { ...prev, disableButton: false, submitLoading: 'Submit', editMode: false, successEdit: 'fail' }
+        }, err => {
+          console.log(err)
+          setMemory1(prev => {
+            return { ...prev, disableButton: false, submitLoading: 'Submit', editMode: false, successEdit: 'fail' }
+          })
         })
-      })
     }
   }
 
@@ -100,33 +100,36 @@ export default function Profile() {
       })
     }
   }
+  console.log('RE-RENDER..........');
 
   const toggleEdit = val => {
+    // console.log('is me normal or not????');
     setMemory1(prev => {
       if(prev.editMode === 'authorized') {
         // cancel edit
-        return {...prev, editMode: false}
+        console.log('cancel edit...');
+        return {...prev}
       } else {
+        console.log('ask to verify...');
         // try edit
         return {...prev, editMode: 'verify', successEdit: ''}
       }
     })
   }
-
-  const toAlamat = () => {
-    navigate('/alamat')
-  }
-
+REWRITE THE WHOLE THING...........REWRITE THE WHOLE PROFILE PAGE
   const userInterface = () => {
-    if(memory1.editMode === 'verify' || memory1.editMode === 'rejected') {
-      return AskLogin(handleSubmitVerify, inputControl, memory1)
-    } else {
-      return ShowProfile(toggleEdit, memory1, handleSubmit, inputControl, toAlamat)
+    if(memory1.editMode === 'verify') {
+      console.log('PENIS');
     }
+    // if(memory1.editMode === 'verify' || memory1.editMode === 'rejected') {
+    //   // return AskLogin(handleSubmitVerify, inputControl, memory1)
+    //   console.log('this should verify');
+    // } else {
+    //   return ShowProfile(memory1, handleSubmit, inputControl)
+    // }
   }
 
   const handleSubmitVerify = val => {
-
     val.preventDefault()
     setMemory1(prev => {
       return {...prev, submitLoading: 'Loading...'}
@@ -140,7 +143,6 @@ export default function Profile() {
         password: memory1.passwordV
       }
     }).then(fulfil => fulfil.data, err => console.log(err))
-    // .then(data => console.log(data), err => console.log(err))
     .then(data => {
       if(data.status === 'accepted') {
         console.log('user accepted');
@@ -171,6 +173,9 @@ export default function Profile() {
 
     <div className="registerWrapper">
       <div className="registerCard">
+        <button
+            onClick={toggleEdit}
+        >{memory1.editMode === 'authorized' ? 'Cancel' : 'Edit Profile'}</button>
         <h1>{memory1.successEdit}</h1>
         {userInterface()}
         <p>{memory1.editUserStatus}</p>

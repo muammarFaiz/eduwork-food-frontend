@@ -1,0 +1,15 @@
+.invoiceCard {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 100px;
+}
+.invoiceProdList {
+  border: solid 1px black;
+  flex-grow: 1;
+  padding: 0 50px;
+}
+.invoiceAlamatCard {
+  border: solid 1px black;
+  padding: 0 30px;
+
+}
