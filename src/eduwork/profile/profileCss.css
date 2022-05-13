@@ -1,6 +1,9 @@
 .userProfileWrapper {
   padding: 50px 31%;
 }
+.userProfileWrapper > button {
+  margin: auto 5px;
+}
 .profileForm1 {
   display:  grid;
   gap: 10px;

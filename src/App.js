@@ -40,10 +40,13 @@ function App() {
   useEffect(() => {
     console.log('authenticate useeffect ran...');
     if (localStorage.getItem('token')) {
-      axios.get('http://localhost:3001/auth', {
+      axios.get('https://eduwork-foodserver.herokuapp.com/auth', {
         headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
       })
-        .then(fulfil => fulfil.data, err => console.log(err.message))
+        .then(fulfil => fulfil.data, err => {
+          console.log('this error: ');
+          console.log(err.message)
+        })
         .then(data => {
           if (data.loggedIn) {
             setMemory2(prev => {
@@ -55,7 +58,10 @@ function App() {
               return { ...prev, loggedIn: 'token rejected' }
             })
           }
-        }, err => console.log(err.message))
+        }, err => {
+          console.log('that error:');
+          console.log(err.message)
+        })
       } else {
         alert('no token found, need to login')
         setMemory2(prev => {

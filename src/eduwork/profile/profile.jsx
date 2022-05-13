@@ -26,7 +26,7 @@ export default function Profile(props) {
 
   useEffect(() => {
     axios({
-      url: 'http://localhost:3001/auth/userdata',
+      url: 'https://eduwork-foodserver.herokuapp.com/auth/userdata',
       method: 'GET',
       headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
     }).then(result => result.data, err => console.log(err))
@@ -74,7 +74,7 @@ export default function Profile(props) {
       tosend = {username: m.live.username, password: m.live.password}
     }
     axios({
-      url: 'http://localhost:3001/auth2/updateuser',
+      url: 'https://eduwork-foodserver.herokuapp.com/auth2/updateuser',
       method: 'POST',
       data: tosend,
       headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -117,6 +117,9 @@ export default function Profile(props) {
 
       <div className="userProfileWrapper">
         <button onClick={editButtonOnclick}>{m.editButtonText}</button>
+        <button onClick={val => navigate('/alamat')}>Addresses</button>
+        <button onClick={val => navigate('/orderlist')}>Orders</button>
+
         <p className="email_p">Email: {m.origin.email}</p>
         <form onSubmit={handleSubmit} className='profileForm1'>
           <input type="text" placeholder="Username" value={m.live.username}

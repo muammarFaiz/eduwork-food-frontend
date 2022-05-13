@@ -34,7 +34,7 @@ export default function Home(props) {
       return {...prev, addCartLoading: 'Loading...'}
     })
     axios({
-      url: 'http://localhost:3001/api/cart',
+      url: 'https://eduwork-foodserver.herokuapp.com/api/cart',
       method: 'POST',
       headers: {authorization: `Bearer ${localStorage.getItem('token')}`},
       data: {product: id}
@@ -74,7 +74,7 @@ export default function Home(props) {
     setMemory1(prev => {
       return {...prev, logoutLoading: true}
     })
-    axios.get('http://localhost:3001/auth/logout', {
+    axios.get('https://eduwork-foodserver.herokuapp.com/auth/logout', {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -100,7 +100,7 @@ export default function Home(props) {
   useEffect(() => {
     // console.log('category or tag modified...');
     axios({
-      url: 'http://localhost:3001/index',
+      url: 'https://eduwork-foodserver.herokuapp.com/index',
       method: 'GET',
       headers: { authorization: `Bearer ${localStorage.getItem('token')}` },
       params: {

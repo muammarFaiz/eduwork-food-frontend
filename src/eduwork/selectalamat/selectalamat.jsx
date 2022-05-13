@@ -20,7 +20,7 @@ export default function SelectAlamat(props) {
 
   useEffect(() => {
     axios({
-      url: 'http://localhost:3001/api/address',
+      url: 'https://eduwork-foodserver.herokuapp.com/api/address',
       method: 'GET',
       headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
     }).then(result => result.data, err => console.log(err))

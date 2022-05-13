@@ -16,7 +16,7 @@ const [memory, setMemory] = useState({
 
   useEffect(() => {
     axios({
-      url: 'http://localhost:3001/api/address',
+      url: 'https://eduwork-foodserver.herokuapp.com/api/address',
       method: 'GET',
       headers: {authorization: `Bearer ${localStorage.getItem('token')}`}
     }).then(result => result.data, err => console.log(err))
@@ -63,7 +63,7 @@ const [memory, setMemory] = useState({
        return {...prev, editmode: false, editbutton: 'Edit', now: currentCard} 
       } else if(reset === 'delete') {
         axios({
-          url: 'http://localhost:3001/api/address',
+          url: 'https://eduwork-foodserver.herokuapp.com/api/address',
           method: 'DELETE',
           headers: {authorization: `Bearer ${localStorage.getItem('token')}`},
           data: {id: memory.now._id}
@@ -122,7 +122,7 @@ const [memory, setMemory] = useState({
     if(!isEmpty) {
       console.log('axios is sending...');
       axios({
-        url: 'http://localhost:3001/api/address',
+        url: 'https://eduwork-foodserver.herokuapp.com/api/address',
         method: method,
         headers: {authorization: `Bearer ${localStorage.getItem('token')}`},
         data: {newAddress: tosend}

@@ -21,7 +21,7 @@ export default function OrderList(props) {
       m.orderAddressArr.forEach(dest => {
         dest.orderList.forEach(ord => {
           const promi = axios({
-            url: 'http://localhost:3001/api/products/findbyid',
+            url: 'https://eduwork-foodserver.herokuapp.com/api/products/findbyid',
             method: 'POST',
             headers: { authorization: `Bearer ${localStorage.getItem('token')}` },
             data: {
@@ -51,7 +51,7 @@ export default function OrderList(props) {
   
   useEffect(() => {
     axios({
-      url: 'http://localhost:3001/api/address',
+      url: 'https://eduwork-foodserver.herokuapp.com/api/address',
       method: 'GET',
       headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
     }).then(fulfil => fulfil.data, err => console.log(err))
@@ -61,7 +61,7 @@ export default function OrderList(props) {
       }, err => console.log(err))
       
       axios({
-      url: 'http://localhost:3001/api/order',
+      url: 'https://eduwork-foodserver.herokuapp.com/api/order',
       method: 'GET',
       headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
     }).then(fulfil => fulfil.data, err => console.log(err))
@@ -137,7 +137,7 @@ export default function OrderList(props) {
             if(obj.destination === thisAddr.destination) {
               return (
                 <div className="orderCardInner" key={i}>
-                  <img src={`http://localhost:3001/images/${obj.data.image_url.split('/')[obj.data.image_url.split('/').length - 1]
+                  <img src={`https://eduwork-foodserver.herokuapp.com/images/${obj.data.image_url.split('/')[obj.data.image_url.split('/').length - 1]
                     }`} alt={obj.data.image_url.split('/')[obj.data.image_url.split('/').length - 1]} />
                   <div className="orderCardDetail">
                     <h3>{obj.data.productName}</h3>

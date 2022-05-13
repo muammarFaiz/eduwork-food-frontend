@@ -17,7 +17,7 @@ export default function Login(props) {
     setMemory1(prev => {
       return {...prev, loginLoading: 'Loading'}
     })
-    axios.post('http://localhost:3001/auth/login', {
+    axios.post('https://eduwork-foodserver.herokuapp.com/auth/login', {
       email: memory1.email,
       password: memory1.password
     })
