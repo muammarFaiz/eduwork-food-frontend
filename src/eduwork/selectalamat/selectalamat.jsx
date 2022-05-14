@@ -19,7 +19,7 @@ export default function SelectAlamat(props) {
 
   useEffect(() => {
     axios({
-      url: `${process.env.SERVER_URL || 'http://localhost:3001'}/api/address`,
+      url: `${process.env.REACT_APP_SERVER_URL || 'http://localhost:3001'}/api/address`,
       method: 'GET',
       headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
     }).then(result => result.data, err => console.log(err))

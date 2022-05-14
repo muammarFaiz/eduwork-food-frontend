@@ -17,7 +17,7 @@ export default function Login(props) {
     setMemory1(prev => {
       return {...prev, loginLoading: 'Loading'}
     })
-    axios.post(`${process.env.SERVER_URL || 'http://localhost:3001'}/auth/login`, {
+    axios.post(`${process.env.REACT_APP_SERVER_URL || 'http://localhost:3001'}/auth/login`, {
       email: memory1.email,
       password: memory1.password
     })
