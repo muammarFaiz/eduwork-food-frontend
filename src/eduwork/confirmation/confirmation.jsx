@@ -55,7 +55,7 @@ export default function Confirmation(props) {
       const imageName = obj.product.image_url.split('/')[obj.product.image_url.split('/').length - 1]
       return (
           <div className="confirmProductCard" key={i}>
-            <img src={`https://eduwork-foodserver.herokuapp.com/images/${imageName}`} alt={imageName} />
+            <img src={`${process.env.SERVER_URL || 'http://localhost:3001'}/images/${imageName}`} alt={imageName} />
             <div className="productInfoConfirmation">
               <h3>Product Name: {obj.product.productName}</h3>
               <h3>quantity: {obj.quantity}</h3>
@@ -73,7 +73,7 @@ export default function Confirmation(props) {
     else {prodArr = [m.products]}
     console.log({ order: prodArr, destinationId: m.alamat._id });
     axios({
-      url: 'https://eduwork-foodserver.herokuapp.com/api/order',
+      url: `${process.env.SERVER_URL || 'http://localhost:3001'}/api/order`,
       method: 'POST',
       headers: {authorization: `Bearer ${localStorage.getItem('token')}`},
       data: {order: prodArr, destinationId: m.alamat._id}

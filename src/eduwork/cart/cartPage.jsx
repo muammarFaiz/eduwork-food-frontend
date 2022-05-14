@@ -6,7 +6,7 @@ import './cartStyle.css'
 
 export default function Cart(props) {
   const [memory1, setMemory1] = useState({
-    cart: [],
+    cart: null,
     cartLoading: false,
     quantityUpdated: false
   })
@@ -18,7 +18,7 @@ export default function Cart(props) {
       return { ...prev, cartLoading: true}
     })
     axios({
-      url: 'https://eduwork-foodserver.herokuapp.com/api/cart',
+      url: `${process.env.SERVER_URL || 'http://localhost:3001'}/api/cart`,
       method: 'GET',
       headers: {authorization: `Bearer ${localStorage.getItem('token')}`}
     }).then(resu => resu.data, err => console.log(err))
@@ -102,11 +102,16 @@ export default function Cart(props) {
   }
 
   const saveCart = () => {
-    const tosend = memory1.cart.map(obj => {
-      return {product: obj.product._id, quantity: obj.quantity}
-    })
+    let tosend
+    if(memory1.cart.length === 0) {
+      tosend = []
+    } else {
+      tosend = memory1.cart.map(obj => {
+        return {product: obj.product._id, quantity: obj.quantity}
+      })
+    }
     axios({
-      url: 'https://eduwork-foodserver.herokuapp.com/api/cart',
+      url: `${process.env.SERVER_URL || 'http://localhost:3001'}/api/cart`,
       method: 'PUT',
       data: {newArr: tosend},
       headers: {authorization: `Bearer ${localStorage.getItem('token')}`}
@@ -130,7 +135,7 @@ export default function Cart(props) {
   }
 
   const saveButton = () => {
-    if(memory1.cart.length === 0) {
+    if (memory1.cart === null) {
       return ''
     } else {
       return memory1.quantityUpdated ? <button onClick={saveCart}>Save Changes</button> : ''
@@ -138,33 +143,37 @@ export default function Cart(props) {
   }
 
   const cartCard = () => {
-    if(memory1.cart.length) {
-      const cards = memory1.cart.map((prod, i) => {
-        return (
-          <div className="cartCard" key={i}>
-            <h1>{prod.product.productName}</h1>
-            <div className="productDetail">
-                <img src={
-                  `https://eduwork-foodserver.herokuapp.com/images/${prod.product.image_url.split('/')[2]}`
-                } alt={prod.product.productName} />
-              <div>
-                <div className="quantityButton">
-                  <button onClick={val => modq(val, prod._id)}>-</button>
-                  <span>{prod.quantity}</span>
-                  <button onClick={val => modq(val, prod._id)}>+</button>
+    if(memory1.cart === null) {
+      return <h1>Loading...</h1>
+    } else {
+      if(memory1.cart.length) {
+        const cards = memory1.cart.map((prod, i) => {
+          return (
+            <div className="cartCard" key={i}>
+              <h1>{prod.product.productName}</h1>
+              <div className="productDetail">
+                  <img src={
+                    `${process.env.SERVER_URL || 'http://localhost:3001'}/images/${prod.product.image_url.split('/')[2]}`
+                  } alt={prod.product.productName} />
+                <div>
+                  <div className="quantityButton">
+                    <button onClick={val => modq(val, prod._id)}>-</button>
+                    <span>{prod.quantity}</span>
+                    <button onClick={val => modq(val, prod._id)}>+</button>
+                  </div>
+                  <p>{prod.product.price}</p>
+                  <p>{totalPrice(prod)}</p>
+                  <button onClick={val => deleteMe(prod._id)}>Delete</button>
+                  <button onClick={val => buyMe(prod)}>Buy</button>
                 </div>
-                <p>{prod.product.price}</p>
-                <p>{totalPrice(prod)}</p>
-                <button onClick={val => deleteMe(prod._id)}>Delete</button>
-                <button onClick={val => buyMe(prod)}>Buy</button>
               </div>
             </div>
-          </div>
-        )
-      })
-      return cards
-    } else {
-      return <h1>your cart is empty...</h1>
+          )
+        })
+        return cards
+      } else {
+        return <h1>your cart is empty...</h1>
+      }
     }
   }
 
@@ -183,7 +192,7 @@ export default function Cart(props) {
       <div className="cartWrapper">
         {cartCard()}
         {saveButton()}
-        {memory1.cart.length === 0 ? '' : <button onClick={() => buyMe(memory1.cart)}>Checkout</button>}
+        {memory1.cart === null || memory1.cart.length === 0 ? '' : <button onClick={() => buyMe(memory1.cart)}>Checkout</button>}
       </div>
     </>
   )

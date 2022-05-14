@@ -40,7 +40,7 @@ function App() {
   useEffect(() => {
     console.log('authenticate useeffect ran...');
     if (localStorage.getItem('token')) {
-      axios.get('https://eduwork-foodserver.herokuapp.com/auth', {
+      axios.get(`${process.env.SERVER_URL || 'http://localhost:3001'}/auth`, {
         headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
       })
         .then(fulfil => fulfil.data, err => {

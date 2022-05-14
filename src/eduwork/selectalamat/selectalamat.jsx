@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { RiArrowDropDownLine } from "react-icons/ri";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 import './selectalamatCss.css'
 
@@ -20,7 +19,7 @@ export default function SelectAlamat(props) {
 
   useEffect(() => {
     axios({
-      url: 'https://eduwork-foodserver.herokuapp.com/api/address',
+      url: `${process.env.SERVER_URL || 'http://localhost:3001'}/api/address`,
       method: 'GET',
       headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
     }).then(result => result.data, err => console.log(err))
