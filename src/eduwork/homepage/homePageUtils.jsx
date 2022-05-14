@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 const initialReq = (axios, setMemory1) => {
   console.log('use effect home is ran...');
 
-  axios.get('https://eduwork-foodserver.herokuapp.com/categories')
+  axios.get(`${process.env.SERVER_URL || 'http://localhost:3001'}/categories`)
     .then(fulfil => fulfil.data, rej => console.log(rej))
     .then(fulfilData => {
       setMemory1(prev => {
         return { ...prev, categories: fulfilData }
       })
     })
-  axios.get('https://eduwork-foodserver.herokuapp.com/tags')
+  axios.get(`${process.env.SERVER_URL || 'http://localhost:3001'}/tags`)
     .then(fulfil => fulfil.data, rej => console.log(rej))
     .then(fulfilData => {
       setMemory1(prev => {
@@ -74,7 +74,7 @@ const toggleButton1 = (setMemory1, searchbarRef) => {
 
 const cardFilter = (cardData, card) => {
   return () => {
-    const final = cardData.map((obj, i) => card(obj, i))
+    const final = cardData.length === 0 ? <h1>Zero result</h1> : cardData.map((obj, i) => card(obj, i))
     return final
   }
 }
@@ -96,7 +96,7 @@ const card1 = (addToCart, memory1, navigate, setMemory2) => {
     return (
       <div className='product__card' key={i}>
         <h1>{obj.productName}</h1>
-        <img src={`https://eduwork-foodserver.herokuapp.com/images/${obj.image_url.split('/')[obj.image_url.split('/').length - 1]
+        <img src={`${process.env.SERVER_URL || 'http://localhost:3001'}/images/${obj.image_url.split('/')[obj.image_url.split('/').length - 1]
           }`} alt={obj.image_url.split('/')[obj.image_url.split('/').length - 1]} />
         <div className='cardDetails'>
           <p>category: {obj.category.name}</p>

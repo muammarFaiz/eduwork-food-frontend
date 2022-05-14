@@ -53,7 +53,7 @@ export default function PageNav(props) {
       if(pageButton) {
 
         axios({
-          url: 'https://eduwork-foodserver.herokuapp.com/index',
+          url: `${process.env.SERVER_URL || 'http://localhost:3001'}/index`,
           method: 'GET',
           headers: {authorization: `Bearer ${localStorage.getItem('token')}`},
           params: {

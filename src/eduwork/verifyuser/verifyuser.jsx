@@ -13,7 +13,7 @@ export default function Verify(props) {
 
   useEffect(() => {
     axios({
-      url: 'https://eduwork-foodserver.herokuapp.com/auth/userdata',
+      url: `${process.env.SERVER_URL || 'http://localhost:3001'}/auth/userdata`,
       method: 'GET',
       headers: { authorization: `Bearer ${localStorage.getItem('token')}` }
     }).then(result => result.data, err => console.log(err))
@@ -44,7 +44,7 @@ export default function Verify(props) {
   const handleSubmit = val => {
     val.preventDefault()
     axios({
-      url: 'https://eduwork-foodserver.herokuapp.com/auth2/verify2',
+      url: `${process.env.SERVER_URL || 'http://localhost:3001'}/auth2/verify2`,
       method: 'POST',
       headers: { authorization: `Bearer ${localStorage.getItem('token')}` },
       data: {
