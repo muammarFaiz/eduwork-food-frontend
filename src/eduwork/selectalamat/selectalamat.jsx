@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { RiArrowDropDownLine } from "react-icons/ri";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 import './selectalamatCss.css'
 

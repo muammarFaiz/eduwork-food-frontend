@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { RiSearchLine } from "react-icons/ri";
 
 import initialReq, { card1, cardFilter, detectClick1, dropdownHandle, submitSearch1, toggleButton1 } from './homePageUtils'
 import PageNav from './pagesNav'
@@ -169,7 +170,7 @@ export default function Home(props) {
         </div>
         <div className='searchbar'>
           <input onChange={val => {searchbarRef.current = val.target.value}} type="text" />
-          <button onClick={submitSearch}>Search</button>
+          <button onClick={submitSearch}><RiSearchLine /></button>
         </div>
         {ifLoggedIn()}
       </div>
