@@ -53,7 +53,7 @@ export default function PageNav(props) {
       if(pageButton) {
 
         axios({
-          url: `${process.env.SERVER_URL || 'http://localhost:3001'}/index`,
+          url: `${process.env.REACT_APP_SERVER_URL || 'http://localhost:3001'}/index`,
           method: 'GET',
           headers: {authorization: `Bearer ${localStorage.getItem('token')}`},
           params: {

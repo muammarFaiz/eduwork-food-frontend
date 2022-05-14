@@ -35,7 +35,7 @@ export default function Home(props) {
       return {...prev, addCartLoading: 'Loading...'}
     })
     axios({
-      url: `${process.env.SERVER_URL || 'http://localhost:3001'}/api/cart`,
+      url: `${process.env.REACT_APP_SERVER_URL || 'http://localhost:3001'}/api/cart`,
       method: 'POST',
       headers: {authorization: `Bearer ${localStorage.getItem('token')}`},
       data: {product: id}
@@ -75,7 +75,7 @@ export default function Home(props) {
     setMemory1(prev => {
       return {...prev, logoutLoading: true}
     })
-    axios.get(`${process.env.SERVER_URL || 'http://localhost:3001'}/auth/logout`, {
+    axios.get(`${process.env.REACT_APP_SERVER_URL || 'http://localhost:3001'}/auth/logout`, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -102,7 +102,7 @@ export default function Home(props) {
     // console.log('category or tag modified...');
     setCardData('')
     axios({
-      url: `${process.env.SERVER_URL || 'http://localhost:3001'}/index`,
+      url: `${process.env.REACT_APP_SERVER_URL || 'http://localhost:3001'}/index`,
       method: 'GET',
       headers: { authorization: `Bearer ${localStorage.getItem('token')}` },
       params: {

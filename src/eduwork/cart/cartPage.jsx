@@ -18,7 +18,7 @@ export default function Cart(props) {
       return { ...prev, cartLoading: true}
     })
     axios({
-      url: `${process.env.SERVER_URL || 'http://localhost:3001'}/api/cart`,
+      url: `${process.env.REACT_APP_SERVER_URL || 'http://localhost:3001'}/api/cart`,
       method: 'GET',
       headers: {authorization: `Bearer ${localStorage.getItem('token')}`}
     }).then(resu => resu.data, err => console.log(err))
@@ -111,7 +111,7 @@ export default function Cart(props) {
       })
     }
     axios({
-      url: `${process.env.SERVER_URL || 'http://localhost:3001'}/api/cart`,
+      url: `${process.env.REACT_APP_SERVER_URL || 'http://localhost:3001'}/api/cart`,
       method: 'PUT',
       data: {newArr: tosend},
       headers: {authorization: `Bearer ${localStorage.getItem('token')}`}
@@ -153,7 +153,7 @@ export default function Cart(props) {
               <h1>{prod.product.productName}</h1>
               <div className="productDetail">
                   <img src={
-                    `${process.env.SERVER_URL || 'http://localhost:3001'}/images/${prod.product.image_url.split('/')[2]}`
+                    `${process.env.REACT_APP_SERVER_URL || 'http://localhost:3001'}/images/${prod.product.image_url.split('/')[2]}`
                   } alt={prod.product.productName} />
                 <div>
                   <div className="quantityButton">

@@ -11,7 +11,7 @@ export default function Register(props) {
     const send = val => {
         val.preventDefault()
         if(input.password === input.confirmPass) {
-            axios.post(`${process.env.SERVER_URL || 'http://localhost:3001'}/auth/register`, {
+            axios.post(`${process.env.REACT_APP_SERVER_URL || 'http://localhost:3001'}/auth/register`, {
                 data: {
                     username: val.target[0].value,
                     email: val.target[1].value,
