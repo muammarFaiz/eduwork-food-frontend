@@ -10,33 +10,13 @@ export default function Invoice(props) {
   })
 
   const totalPrice = (prod) => {
-    let priceInt = ''
-    const strArr = prod.product.price.split('')
-    strArr.forEach(str => {
-      if (parseInt(str, 10) || parseInt(str, 10) === 0) {
-        priceInt = priceInt + str
-      }
-    })
-    priceInt = parseInt(priceInt, 10) * prod.quantity
-    priceInt = priceInt.toString()
-    let i = 0, reverseStr = ''
-    while (i < priceInt.length) {
-      const reverseIndex = (priceInt.length - 1) - i
-      if ((i + 1) % 4 === 0) {
-        reverseStr = (reverseStr + '.') + priceInt[reverseIndex]
-      } else {
-        reverseStr = reverseStr + priceInt[reverseIndex]
-      }
-      i++
+    if (prod.product.price.match(/,/gi)) {
+      console.log('internal error, price cannot contain comma');
     }
-
-    let i2 = 0, reversed = ''
-    while (i2 < reverseStr.length) {
-      reversed = reversed + reverseStr[(reverseStr.length - 1) - i2]
-      i2++
-    }
-
-    return reversed
+    const priceInt = parseInt(prod.product.price.replace(/[a-z]|\./gi, ''), 10)
+    const totalPriceInt = priceInt * prod.quantity
+    const priceStr = `Rp. ${totalPriceInt.toLocaleString('id')}`
+    return priceStr
   }
 
   const productCard = () => {
@@ -56,7 +36,7 @@ export default function Invoice(props) {
             <h3>Product Name: {obj.product.productName}</h3>
             <p>quantity: {obj.quantity}</p>
             <p>{obj.product.price}</p>
-            <p>Total: Rp. {totalPrice(obj)}</p>
+            <p>Total: {totalPrice(obj)}</p>
           </div>
         </div>
       )

@@ -98,33 +98,13 @@ export default function OrderList(props) {
   }
 
   const totalPrice = (priceStr, quantity) => {
-    let priceInt = ''
-    const strArr = priceStr.split('')
-    strArr.forEach(str => {
-      if (parseInt(str, 10) || parseInt(str, 10) === 0) {
-        priceInt = priceInt + str
-      }
-    })
-    priceInt = parseInt(priceInt, 10) * quantity
-    priceInt = priceInt.toString()
-    let i = 0, reverseStr = ''
-    while (i < priceInt.length) {
-      const reverseIndex = (priceInt.length - 1) - i
-      if ((i + 1) % 4 === 0) {
-        reverseStr = (reverseStr + '.') + priceInt[reverseIndex]
-      } else {
-        reverseStr = reverseStr + priceInt[reverseIndex]
-      }
-      i++
+    if (priceStr.match(/,/gi)) {
+      console.log('internal error, price cannot contain comma');
     }
-
-    let i2 = 0, reversed = ''
-    while (i2 < reverseStr.length) {
-      reversed = reversed + reverseStr[(reverseStr.length - 1) - i2]
-      i2++
-    }
-
-    return reversed
+    const priceInt = parseInt(priceStr.replace(/[a-z]|\./gi, ''), 10)
+    const totalPriceInt = priceInt * quantity
+    const priceStrFinal = `Rp. ${totalPriceInt.toLocaleString('id')}`
+    return priceStrFinal
   }
 
   const orderCard = (thisAddr) => {
